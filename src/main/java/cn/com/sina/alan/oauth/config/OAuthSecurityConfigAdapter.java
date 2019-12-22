@@ -22,19 +22,27 @@ import java.util.concurrent.TimeUnit;
  * Created by wanghongfei(hongfei7@staff.sina.com.cn) on 9/12/16.
  */
 @Configuration
-public class OAuthSecurityConfig extends AuthorizationServerConfigurerAdapter {
+public class OAuthSecurityConfigAdapter extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
     private DataSource dataSource;
 
+    //声明TokenStore实现
+
     @Bean
     public TokenStore tokenStore() {
         return new JdbcTokenStore(dataSource);
     }
 
+    //声明 ClientDetails实现
+    @Bean
+    public ClientDetailsService clientDetails() {
+        return new JdbcClientDetailsService(dataSource);
+    }
 
+    // 配置框架应用上述实现
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.authenticationManager(authenticationManager);
@@ -59,19 +67,14 @@ public class OAuthSecurityConfig extends AuthorizationServerConfigurerAdapter {
         oauthServer.allowFormAuthenticationForClients();
     }
 
-    @Bean
-    public ClientDetailsService clientDetails() {
-        return new JdbcClientDetailsService(dataSource);
-    }
-
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.withClientDetails(clientDetails());
-/*        clients.inMemory()
+//        clients.withClientDetails(clientDetails());
+        clients.inMemory()
                 .withClient("client")
                 .secret("secret")
                 .authorizedGrantTypes("authorization_code")
-                .scopes("app");*/
+                .scopes("app");
     }
 
 }
