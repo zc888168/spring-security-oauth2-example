@@ -1,8 +1,8 @@
-security:
-  oauth2:
-    client:
-      client-id:  client
-      client-secret: client
+#security:
+#  oauth2:
+#    client:
+#      client-id:  client
+#      client-secret: client
 
 spring:
   datasource:
